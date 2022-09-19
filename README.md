@@ -36,16 +36,16 @@
         $ sudo ln -s /usr/local/protobuf/bin/protoc /usr/bin/protoc
         $ sudo chmod +x /usr/bin/protoc
 
-# 开始rust grpc
+# start rust grpc
 
-cargo new grpc-demo
+cargo new rs-rpc
 
-1.新建src/client.rs
+1. 新建src/client.rs
 ```rust
 fn main() {}
 ```
 
-2.在src同级目录新建build.rs文件，添加如下内容：
+2. 在src同级目录新建build.rs文件，添加如下内容：
 ```rust
 use std::ffi::OsStr;
 use std::fs;
@@ -101,7 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-3.添加依赖
+3. 添加依赖
 ```toml
 [[bin]]
 name = "rs-rpc-client"
@@ -164,7 +164,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```
 
-6.添加client.rs代码
+6. 添加client.rs代码
 ```rust
 use rust_grpc::hello::greeter_service_client::GreeterServiceClient;
 use rust_grpc::hello::HelloReq;
@@ -196,7 +196,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```
 
-# 运行 server
+# run server
 ```shell
 % cargo run --bin grpc-demo
 Finished dev [unoptimized + debuginfo] target(s) in 0.12s
@@ -205,7 +205,7 @@ grpc server run:127.0.0.1:8081
 
 ```
 
-# 运行 client
+# run client
 ```shell
 % cargo run --bin grpc-demo-client
 Compiling grpc-demo v0.1.0 (/web/rust/rust-bible/part7/grpc-demo)
@@ -219,9 +219,6 @@ res:Response { metadata: MetadataMap { headers: {"content-type": "application/gr
 name:daheige
 message:hello,rust grpc
 ```
-
-# rust grpc参考
-https://crates.io/crates/tonic
 
 # go grpc gmicro
 https://github.com/daheige/gmicro
