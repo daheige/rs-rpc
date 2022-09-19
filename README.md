@@ -1,5 +1,5 @@
 # rust grpc
-- rust grpc microservice project.
+- rust grpc microservice project
 - grpc使用 采用tokio,tonic,tonic-build 和 prost 进行构建
 - tonic https://crates.io/crates/tonic
 
@@ -115,7 +115,7 @@ tokio = {version = "1",features = ["full"]}
 [build-dependencies]
 tonic-build = "0.8.0"
 ```
-4. cargo run --bin grpc-demo
+4. cargo run --bin rs-rpc
    这一步就会安装好所有的依赖，并构建proto/hello.proto
 
 5. 在src/main.rs中添加rust grpc server代码
@@ -198,23 +198,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 # run server
 ```shell
-% cargo run --bin grpc-demo
-Finished dev [unoptimized + debuginfo] target(s) in 0.12s
- Running `target/debug/grpc-demo`
+% cargo run --bin rs-rpc
+Finished dev [unoptimized + debuginfo] target(s) in 0.18s
+Running `target/debug/rs-rpc`
 grpc server run:127.0.0.1:8081
-
 ```
 
 # run client
 ```shell
-% cargo run --bin grpc-demo-client
-Compiling grpc-demo v0.1.0 (/web/rust/rust-bible/part7/grpc-demo)
-Finished dev [unoptimized + debuginfo] target(s) in 1.21s
-Running `target/debug/grpc-demo-client`
-client:GreeterServiceClient { inner: Grpc { inner: Channel } }
-res:Response { metadata: MetadataMap { headers: {"content-type": "application/grpc", 
-"date": "Sat, 11 Jun 2022 13:45:53 GMT", "grpc-status": "0"} }, message: HelloReply { 
-  name: "daheige", message: "hello,rust grpc" }, extensions: Extensions
+% cargo run --bin rs-rpc-client
+client:GreeterServiceClient { inner: Grpc { 
+  inner: Channel, origin: /, compression_encoding: None, accept_compression_encodings: EnabledCompressionEncodings 
+} }
+res:Response { metadata: MetadataMap { 
+  headers: {"content-type": "application/grpc", "date": "Mon, 19 Sep 2022 15:40:33 GMT", "grpc-status": "0"} }, 
+  message: HelloReply { name: "daheige", message: "hello,rust grpc" }, extensions: Extensions 
 }
 name:daheige
 message:hello,rust grpc
