@@ -12,6 +12,10 @@ license = "MIT"
 name = "rs-rpc-client"
 path = "src/client.rs"
 
+[[bin]]
+name = "rs-grpc-gateway"
+path = "gateway/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
