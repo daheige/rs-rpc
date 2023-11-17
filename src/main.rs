@@ -14,12 +14,12 @@ pub struct GreeterImpl {}
 impl GreeterService for GreeterImpl {
     // 实现async_hello方法
     async fn say_hello(&self, request: Request<HelloReq>) -> Result<Response<HelloReply>, Status> {
+        // 获取request pb message
         let req = &request.into_inner();
         println!("got request.id:{}", req.id);
         println!("got request.name:{}", req.name);
         let reply = HelloReply {
-            message: format!("hello,rust grpc"),
-            // 由于gRPC请求和响应中的字段都是私有的，所以需要使用 .into_inner()
+            message: format!("hello,{}",req.name),
             name: format!("{}", req.name).into(),
         };
 

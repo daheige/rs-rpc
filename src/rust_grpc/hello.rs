@@ -21,7 +21,7 @@ pub mod greeter_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /// service 定义服务
+    /// GreeterService 定义服务
     #[derive(Debug, Clone)]
     pub struct GreeterServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -119,7 +119,7 @@ pub mod greeter_service_server {
             request: tonic::Request<super::HelloReq>,
         ) -> Result<tonic::Response<super::HelloReply>, tonic::Status>;
     }
-    /// service 定义服务
+    /// GreeterService 定义服务
     #[derive(Debug)]
     pub struct GreeterServiceServer<T: GreeterService> {
         inner: _Inner<T>,

@@ -5,9 +5,18 @@ option go_package = ".;pb";
 
 package Hello; // 指定生成php文件的命名空间，防止命名冲突
 
-// service 定义服务
+// 导入http gateway相关的包
+import "google/api/annotations.proto";
+
+// GreeterService 定义服务
 service GreeterService {
-    rpc SayHello (HelloReq) returns (HelloReply);
+    rpc SayHello (HelloReq) returns (HelloReply){
+        option (google.api.http) = {
+            // get: "/v1/greeter/say_hello/{name}"
+            post: "/v1/greeter/say_hello"
+            body: "*"
+        };
+    };
 }
 
 // message 对应生成代码的 struct

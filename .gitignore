@@ -6,3 +6,6 @@ target/*
 .idea
 target
 .vscode
+clients/nodejs/node_modules
+clients/go/hello
+gateway/gateway

@@ -36,9 +36,10 @@
         $ sudo ln -s /usr/local/protobuf/bin/protoc /usr/bin/protoc
         $ sudo chmod +x /usr/bin/protoc
 
-# start rust grpc
-
-cargo new rs-rpc
+# create a rust grpc project
+```shell
+   cargo new rs-rpc
+```
 
 1. 新建src/client.rs
 ```rust
@@ -125,43 +126,44 @@ use rust_grpc::hello::{HelloReply, HelloReq};
 
 use tonic::{transport::Server, Request, Response, Status};
 
-// 定义grpc代码生成的包名
+/// 定义grpc代码生成的包名
 mod rust_grpc;
 
-// 实现hello.proto 接口服务
+/// 实现hello.proto 接口服务
 #[derive(Debug, Default)]
 pub struct GreeterImpl {}
 
 #[tonic::async_trait]
 impl GreeterService for GreeterImpl {
-    // 实现async_hello方法
-    async fn say_hello(&self, request: Request<HelloReq>) -> Result<Response<HelloReply>, Status> {
-        // println!("got a request:{:?}", &request);
-        let reply = HelloReply {
-            message: format!("hello,rust grpc"),
-            // 由于gRPC请求和响应中的字段都是私有的，所以需要使用 .into_inner()
-            name: format!("{}", request.into_inner().name).into(),
-        };
+   // 实现async_hello方法
+   async fn say_hello(&self, request: Request<HelloReq>) -> Result<Response<HelloReply>, Status> {
+      // 获取request pb message
+      let req = &request.into_inner();
+      println!("got request.id:{}", req.id);
+      println!("got request.name:{}", req.name);
+      let reply = HelloReply {
+         message: format!("hello,{}",req.name),
+         name: format!("{}", req.name).into(),
+      };
 
-        Ok(Response::new(reply))
-    }
+      Ok(Response::new(reply))
+   }
 }
 
-// 采用tokio 运行时来跑grpc server
+/// 采用 tokio 运行时来跑grpc server
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let address = "127.0.0.1:8081".parse()?;
-    println!("grpc server run:{}", address);
+   let address = "127.0.0.1:8081".parse()?;
+   println!("grpc server run:{}", address);
 
-    let greeter = GreeterImpl::default();
-    Server::builder()
-        .add_service(GreeterServiceServer::new(greeter))
-        .serve(address)
-        .await?;
+   let greeter = GreeterImpl::default();
+   Server::builder()
+           .add_service(GreeterServiceServer::new(greeter))
+           .serve(address)
+           .await?;
 
-    Ok(())
+   Ok(())
 }
-
 ```
 
 6. 添加client.rs代码
@@ -196,26 +198,85 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```
 
-# run server
+# run grpc server
 ```shell
-% cargo run --bin rs-rpc
-Finished dev [unoptimized + debuginfo] target(s) in 0.18s
-Running `target/debug/rs-rpc`
-grpc server run:127.0.0.1:8081
+cargo run --bin rs-rpc
+```
+output:
+```
+ Finished dev [unoptimized + debuginfo] target(s) in 0.18s
+ Running `target/debug/rs-rpc`
+ grpc server run:127.0.0.1:8081
 ```
 
-# run client
+# run rust client
 ```shell
-% cargo run --bin rs-rpc-client
-client:GreeterServiceClient { inner: Grpc { 
-  inner: Channel, origin: /, compression_encoding: None, accept_compression_encodings: EnabledCompressionEncodings 
-} }
-res:Response { metadata: MetadataMap { 
-  headers: {"content-type": "application/grpc", "date": "Mon, 19 Sep 2022 15:40:33 GMT", "grpc-status": "0"} }, 
-  message: HelloReply { name: "daheige", message: "hello,rust grpc" }, extensions: Extensions 
-}
+cargo run --bin rs-rpc-client
+```
+output:
+```
+    Finished dev [unoptimized + debuginfo] target(s) in 0.18s
+     Running `target/debug/rs-rpc-client`
+client:GreeterServiceClient { inner: Grpc { inner: Channel, origin: /, compression_encoding: None, accept_compression_encodings: EnabledCompressionEncodings } }
+res:Response { metadata: MetadataMap { headers: {"content-type": "application/grpc", "date": "Fri, 17 Nov 2023 16:11:10 GMT", "grpc-status": "0"} }, message: HelloReply { name: "daheige", message: "hello,daheige" }, extensions: Extensions }
 name:daheige
-message:hello,rust grpc
+message:hello,daheige
+```
+
+# run nodejs client
+generate nodejs code
+```shell
+sh bin/nodejs-gen.sh
+```
+
+install nodejs package and run by `cd clients/nodejs && npm install --save`
+```shell
+node clients/nodejs/hello.js
+```
+output:
+```
+{
+  wrappers_: null,
+  messageId_: undefined,
+  arrayIndexOffset_: -1,
+  array: [ 'heige', 'hello,rust grpc' ],
+  pivot_: 1.7976931348623157e+308,
+  convertedPrimitiveFields_: {}
+}
+message:  hello,rust grpc
+name:  heige
+```
+
+# run go client
+```shell
+# please install go before run it.
+go mod tidy
+sh bin/go-gen.sh #generate nodejs code
+cd clients/go && go build -o hello && ./hello
+```
+output:
+```
+2023/11/17 23:23:30 x-request-id:  56fde08ea70a4976bfcfd781ac8e8bba
+2023/11/17 23:23:30 name:golang grpc,message:hello,rust grpc
+```
+
+# run grpc http gateway
+please gateway/main.go
+```shell
+cd gateway && go build -o gateway && ./gateway
+```
+output:
+```
+2023/11/18 00:21:29 grpc server endpoint run on:  localhost:8081
+2023/11/18 00:21:29 http gateway run on:  localhost:8090
+```
+curl http gateway
+```shell
+curl http://localhost:8090/v1/greeter/say_hello -d '{"name":"daheige"}'
+```
+output:
+```
+{"name":"daheige", "message":"hello,daheige"}
 ```
 
 # go grpc gmicro

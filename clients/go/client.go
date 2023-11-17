@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/daheige/gmicro/v2"
-	"github.com/daheige/rc-rpc/hello/pb"
+	"github.com/daheige/rs-rpc/clients/go/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
