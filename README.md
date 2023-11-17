@@ -284,3 +284,6 @@ https://github.com/daheige/gmicro
 
 # go grpc demo
 https://github.com/daheige/gmicro-demo
+
+# go grpc http gateway
+https://github.com/grpc-ecosystem/grpc-gateway
