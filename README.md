@@ -251,7 +251,7 @@ name:  heige
 ```shell
 # please install go before run it.
 go mod tidy
-sh bin/go-gen.sh #generate nodejs code
+sh bin/go-gen.sh #generate go grpc/http gateway code
 cd clients/go && go build -o hello && ./hello
 ```
 output:
