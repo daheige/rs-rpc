@@ -42,6 +42,13 @@ tonic https://crates.io/crates/tonic
         $ sudo ln -s /usr/local/protobuf/bin/protoc /usr/bin/protoc
         $ sudo chmod +x /usr/bin/protoc
 
+# mac install protoc
+```shell
+brew install automake
+brew install libtool
+brew install protobuf
+```
+
 # create a rust grpc project
 ```shell
    cargo new rs-rpc
