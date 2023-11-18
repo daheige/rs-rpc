@@ -6,7 +6,7 @@ tonic https://crates.io/crates/tonic
 
 # grpc client support
 - rust grpc采用tokio,tonic,tonic-build 和 prost 代码生成，进行构建
-- grpc客户端支持go,nodejs,php等不同语言调用服务端程序
+- grpc客户端支持go,nodejs,rust等不同语言调用服务端程序
 - 支持http gateway模式（http json请求到网关层后，转换为pb message，然后发起grpc service调用
 
 # centos7 install protoc
@@ -252,11 +252,11 @@ output:
   wrappers_: null,
   messageId_: undefined,
   arrayIndexOffset_: -1,
-  array: [ 'heige', 'hello,rust grpc' ],
+  array: [ 'heige', 'hello,heige' ],
   pivot_: 1.7976931348623157e+308,
   convertedPrimitiveFields_: {}
 }
-message:  hello,rust grpc
+message:  hello,heige
 name:  heige
 ```
 

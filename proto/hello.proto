@@ -3,7 +3,7 @@ syntax = "proto3";
 // protoc 3.11.4+ 版本请用这个
 option go_package = ".;pb";
 
-package Hello; // 指定生成php文件的命名空间，防止命名冲突
+package Hello;
 
 // 导入http gateway相关的包
 import "google/api/annotations.proto";
