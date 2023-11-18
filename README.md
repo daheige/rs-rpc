@@ -9,7 +9,7 @@ tonic https://crates.io/crates/tonic
 - grpc客户端支持go,nodejs,php等不同语言调用服务端程序
 - 支持http gateway模式（http json请求到网关层后，转换为pb message，然后发起grpc service调用
 
-# centos7 protoc install
+# centos7 install protoc
     1、下载https://github.com/protocolbuffers/protobuf/archive/v3.15.8.tar.gz
         cd /usr/local/src
         sudo wget https://github.com/protocolbuffers/protobuf/archive/v3.15.8.tar.gz
