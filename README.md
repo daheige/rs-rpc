@@ -1,12 +1,13 @@
-# rust grpc
-rust grpc microservice project
+# rs-rpc
+rust grpc microservices in action project
+
+# rust grpc crate
 tonic https://crates.io/crates/tonic
 
 # grpc client support
-- rust grpc采用tokio,tonic,tonic-build 和 prost 进行构建
+- rust grpc采用tokio,tonic,tonic-build 和 prost 代码生成，进行构建
 - grpc客户端支持go,nodejs,php等不同语言调用服务端程序
 - 支持http gateway模式（http json请求到网关层后，转换为pb message，然后发起grpc service调用
-
 
 # centos7 protoc install
     1、下载https://github.com/protocolbuffers/protobuf/archive/v3.15.8.tar.gz
@@ -283,6 +284,8 @@ output:
 ```
 {"name":"daheige", "message":"hello,daheige"}
 ```
+gateway运行机制(图片来自grpc-ecosystem/grpc-gateway):
+![](http-gateway.jpg)
 
 # go grpc gmicro
 https://github.com/daheige/gmicro
