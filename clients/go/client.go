@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/daheige/gmicro/v2"
+	"github.com/daheige/rs-rpc/utils"
 	"github.com/daheige/rs-rpc/clients/go/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -48,7 +48,7 @@ func main() {
 		name = os.Args[1]
 	}
 
-	requestID := gmicro.Uuid()
+	requestID := utils.Uuid()
 	log.Println("x-request-id: ", requestID)
 	md := metadata.New(map[string]string{
 		"x-request-id": requestID,
