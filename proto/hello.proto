@@ -1,33 +1,33 @@
 syntax = "proto3";
 
-// protoc 3.11.4+ 版本请用这个
+// go 包定义
 option go_package = ".;pb";
 
 package Hello;
 
-// 导入http gateway相关的包
-import "google/api/annotations.proto";
+// php 命名空间定义
+option php_namespace = "App\\Grpc\\Hello";
+option php_metadata_namespace = "App\\Grpc\\GPBMetadata";
 
-// GreeterService 定义服务
+// 如果需要http gateway的话，请打开这个注释
+// import "google/api/annotations.proto";
+
 service GreeterService {
     rpc SayHello (HelloReq) returns (HelloReply){
-        option (google.api.http) = {
-            // get: "/v1/greeter/say_hello/{name}"
-            post: "/v1/greeter/say_hello"
-            body: "*"
-        };
+        // 如果需要http gateway的话，请打开这个注释
+//        option (google.api.http) = {
+//            // get: "/v1/greeter/say_hello/{name}"
+//            post: "/v1/greeter/say_hello"
+//            body: "*"
+//        };
     };
 }
 
-// message 对应生成代码的 struct
-// 定义客户端请求的数据格式
 message HelloReq {
-    // [修饰符] 类型 字段名 = 标识符;
     int64 id = 1;
     string name = 2;
 }
 
-// 定义服务端响应的数据格式
 message HelloReply {
     string name = 1;
     string message = 2;

@@ -1,14 +1,10 @@
-/// message 对应生成代码的 struct
-/// 定义客户端请求的数据格式
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HelloReq {
-    /// \[修饰符\] 类型 字段名 = 标识符;
     #[prost(int64, tag="1")]
     pub id: i64,
     #[prost(string, tag="2")]
     pub name: ::prost::alloc::string::String,
 }
-/// 定义服务端响应的数据格式
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HelloReply {
     #[prost(string, tag="1")]
@@ -21,7 +17,6 @@ pub mod greeter_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
-    /// GreeterService 定义服务
     #[derive(Debug, Clone)]
     pub struct GreeterServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -119,7 +114,6 @@ pub mod greeter_service_server {
             request: tonic::Request<super::HelloReq>,
         ) -> Result<tonic::Response<super::HelloReply>, tonic::Status>;
     }
-    /// GreeterService 定义服务
     #[derive(Debug)]
     pub struct GreeterServiceServer<T: GreeterService> {
         inner: _Inner<T>,

@@ -273,6 +273,20 @@ output:
 2023/11/17 23:23:30 name:golang grpc,message:hello,rust grpc
 ```
 
+# run php client
+```shell
+composer install
+php hello.php daheige
+```
+output:
+```
+check \Hello\HelloReq exist
+bool(true)
+status code: 0
+name:daheige
+hello,daheige
+```
+
 # run grpc http gateway
 please gateway/main.go
 ```shell
