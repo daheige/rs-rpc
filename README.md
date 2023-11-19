@@ -310,6 +310,9 @@ gateway运行机制(图片来自grpc-ecosystem/grpc-gateway):
 
 # grpcurl usage method
 grpcurl工具主要用于grpcurl请求，可以快速查看grpc proto定义以及调用grpc service定义的方法。
+https://github.com/fullstorydev/grpcurl
+
+tonic grpc reflection使用需要注意的事项：
 - 使用这个操作必须将grpc proto的描述信息通过add_service添加才可以
 - tonic 和 tonic-reflection 以及 tonic-build 需要相同的版本，这个需要在Cargo.toml设置一样
 
@@ -317,6 +320,11 @@ grpcurl工具主要用于grpcurl请求，可以快速查看grpc proto定义以�
    ```shell
    brew install grpcurl
    ```
+   如果你本地安装了golang，那可以直接运行如下命令，安装grpcurl工具
+   ```shell
+   go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+   ```
+
    2. 验证rs-rpc service启动的效果
    ```shell
    grpcurl -plaintext 127.0.0.1:8081 list
