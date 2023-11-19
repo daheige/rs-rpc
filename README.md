@@ -1,5 +1,5 @@
 # rs-rpc
-rust grpc microservices in action project
+rust grpc microservices in action project https://github.com/daheige/rs-rpc
 
 # rust grpc crate
 tonic https://crates.io/crates/tonic
