@@ -382,6 +382,40 @@ tonic grpc reflection使用需要注意的事项：
  }
  ```
 
+# hybrid service
+通过tower进行trait抽象设计，将grpc service 和 http gateway 在一个端口上运行 src/hybrid_server.rs。
+```toml
+# dependent crates
+# server hybrid
+# run the service on a single port
+tower = { version = "0.4", features = ["full"] }
+pin-project = "1.1.3"
+hyper = { version = "0.14", features = ["full"] }
+axum = { version = "0.6.20"}
+```
+运行服务端：
+```shell
+cargo run --bin rs-rpc-hybrid
+```
+成功运行后的效果：
+```
+Finished dev [unoptimized + debuginfo] target(s) in 0.19s
+Running `target/debug/rs-rpc-hybrid`
+grpc server run on:127.0.0.1:50051
+```
+
+验证其运行效果
+```shell
+grpcurl -d '{"name":"daheige"}' -plaintext 127.0.0.1:50051 Hello.GreeterService.SayHello
+```
+输出结果如下：
+```json
+{
+  "name": "daheige",
+  "message": "hello,daheige"
+}
+```
+
 # go grpc gmicro
 https://github.com/daheige/gmicro
 
