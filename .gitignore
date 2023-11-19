@@ -11,3 +11,4 @@ clients/go/hello
 gateway/gateway
 src/rust_grpc/rpc_descriptor.bin
 *.log
+*.pdf

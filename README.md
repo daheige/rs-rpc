@@ -305,7 +305,7 @@ output:
 ```
 {"name":"daheige", "message":"hello,daheige"}
 ```
-gateway运行机制(图片来自grpc-ecosystem/grpc-gateway):
+http gateway运行机制(图片来自grpc-ecosystem/grpc-gateway):
 ![](http-gateway.jpg)
 
 # grpcurl usage method
@@ -316,71 +316,71 @@ tonic grpc reflection使用需要注意的事项：
 - 使用这个操作必须将grpc proto的描述信息通过add_service添加才可以
 - tonic 和 tonic-reflection 以及 tonic-build 需要相同的版本，这个需要在Cargo.toml设置一样
 
-     1. 安装grpcurl工具
-   ```shell
-   brew install grpcurl
-   ```
-   如果你本地安装了golang，那可以直接运行如下命令，安装grpcurl工具
-   ```shell
-   go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
-   ```
+1. 安装grpcurl工具
+ ```shell
+ brew install grpcurl
+ ```
+ 如果你本地安装了golang，那可以直接运行如下命令，安装grpcurl工具
+ ```shell
+ go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+ ```
 
-   2. 验证rs-rpc service启动的效果
-   ```shell
-   grpcurl -plaintext 127.0.0.1:8081 list
-   ```
-   执行上面的命令，输出结果如下：
-   ```
-   Hello.GreeterService
-   grpc.reflection.v1alpha.ServerReflection
-   ```
-   3. 查看proto文件定义的所有方法
-   ```shell
-   grpcurl -plaintext 127.0.0.1:8081 describe Hello.GreeterService
-   ```
-   输出结果如下：
-   ```
-   Hello.GreeterService is a service:
-   service GreeterService {
-     rpc SayHello ( .Hello.HelloReq ) returns ( .Hello.HelloReply );
-   }
-   ```
-   4. 查看请求HelloReq请求参数定义
-   ```shell
-   grpcurl -plaintext 127.0.0.1:8081 describe Hello.HelloReq
-   ```
-   完整的HelloReq定义如下：
-   ```
-   Hello.HelloReq is a message:
-   message HelloReq {
-     int64 id = 1;
-     string name = 2;
-   }
-   ```
-   5. 查看相应HelloReply响应结果定义
-   ```shell
-   grpcurl -plaintext 127.0.0.1:8081 describe Hello.HelloReply
-   ```
-   完整的HelloReply定义如下：
-   ```
-   Hello.HelloReply is a message:
-   message HelloReply {
-     string name = 1;
-     string message = 2;
-   }
-   ```
-   
-   6. 通过grpcurl调用rpc service method
-   ```shell
-   grpcurl -d '{"name":"daheige"}' -plaintext 127.0.0.1:8081 Hello.GreeterService.SayHello
-   ```
-   响应结果如下：
-   ```json
-   {
+ 2. 验证rs-rpc service启动的效果
+ ```shell
+ grpcurl -plaintext 127.0.0.1:8081 list
+ ```
+ 执行上面的命令，输出结果如下：
+ ```
+ Hello.GreeterService
+ grpc.reflection.v1alpha.ServerReflection
+ ```
+ 3. 查看proto文件定义的所有方法
+ ```shell
+ grpcurl -plaintext 127.0.0.1:8081 describe Hello.GreeterService
+ ```
+ 输出结果如下：
+ ```
+ Hello.GreeterService is a service:
+ service GreeterService {
+   rpc SayHello ( .Hello.HelloReq ) returns ( .Hello.HelloReply );
+ }
+ ```
+ 4. 查看请求HelloReq请求参数定义
+ ```shell
+ grpcurl -plaintext 127.0.0.1:8081 describe Hello.HelloReq
+ ```
+ 完整的HelloReq定义如下：
+ ```
+ Hello.HelloReq is a message:
+ message HelloReq {
+   int64 id = 1;
+   string name = 2;
+ }
+ ```
+ 5. 查看相应HelloReply响应结果定义
+ ```shell
+ grpcurl -plaintext 127.0.0.1:8081 describe Hello.HelloReply
+ ```
+ 完整的HelloReply定义如下：
+ ```
+ Hello.HelloReply is a message:
+ message HelloReply {
+   string name = 1;
+   string message = 2;
+ }
+ ```
+ 
+ 6. 通过grpcurl调用rpc service method
+ ```shell
+ grpcurl -d '{"name":"daheige"}' -plaintext 127.0.0.1:8081 Hello.GreeterService.SayHello
+ ```
+ 响应结果如下：
+ ```json
+ {
      "name": "daheige",
      "message": "hello,daheige"
-   }
-   ```
+ }
+ ```
 
 # go grpc gmicro
 https://github.com/daheige/gmicro
