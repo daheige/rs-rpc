@@ -19,9 +19,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out_dir = Path::new("src/rust_grpc"); // 存放grpc rust代码生成的目录
     let _ = fs::create_dir(out_dir); // 创建目录
 
+    // grpc reflection 描述信息这是一个二进制文件
+    let descriptor_path = out_dir.join("rpc_descriptor.bin");
+
     // 2.生成rust grpc代码
     // 指定rust grpc 代码生成的目录
     tonic_build::configure()
+        .file_descriptor_set_path(&descriptor_path)
         .out_dir(out_dir)
         .compile(&file_list, &[proto_dir])?;
 

@@ -19,9 +19,12 @@ path = "gateway/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tonic = "0.8.1"
-prost = "0.11.0"
+tonic = "0.10.2"
+prost = "0.12.2"
 tokio = {version = "1",features = ["full"]}
+# note: Must be the same as the tonic version
+tonic-reflection = "0.10.2"
 
 [build-dependencies]
-tonic-build = "0.8.0"
+# note: Must be the same as the tonic version
+tonic-build = "0.10.2"
