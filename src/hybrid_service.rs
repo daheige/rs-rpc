@@ -28,7 +28,7 @@ impl<ConnInfo, MakeWeb, Grpc> Service<ConnInfo> for HybridMakeService<MakeWeb, G
     fn poll_ready(
         &mut self,
         cx: &mut std::task::Context,
-    ) -> std::task::Poll<Result<(), Self::Error>> {
+    ) -> Poll<Result<(), Self::Error>> {
         self.make_web.poll_ready(cx)
     }
 
@@ -85,7 +85,7 @@ impl<Web, Grpc, WebBody, GrpcBody> Service<Request<Body>> for HybridService<Web,
     fn poll_ready(
         &mut self,
         cx: &mut std::task::Context<'_>,
-    ) -> std::task::Poll<Result<(), Self::Error>> {
+    ) -> Poll<Result<(), Self::Error>> {
         match self.web.poll_ready(cx) {
             Poll::Ready(Ok(())) => match self.grpc.poll_ready(cx) {
                 Poll::Ready(Ok(())) => Poll::Ready(Ok(())),
