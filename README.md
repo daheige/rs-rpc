@@ -392,6 +392,8 @@ tower = { version = "0.4", features = ["full"] }
 pin-project = "1.1.3"
 hyper = { version = "0.14", features = ["full"] }
 axum = { version = "0.6.20"}
+serde = { version = "1.0.192",features = ["derive"]}
+serde_json = "1.0.108"
 ```
 运行服务端：
 ```shell
@@ -413,6 +415,54 @@ grpcurl -d '{"name":"daheige"}' -plaintext 127.0.0.1:50051 Hello.GreeterService.
 {
   "name": "daheige",
   "message": "hello,daheige"
+}
+```
+验证http请求
+```shell
+curl --location --request POST 'localhost:50051/v1/greeter/say_hello' \
+--header 'Content-Type: application/json' \
+--data-raw '{"id":1,"name":"daheige"}'
+```
+输出结果如下：
+```json
+{
+    "code": 0,
+    "message": "ok",
+    "data": {
+        "name": "daheige",
+        "message": "hello,daheige"
+    }
+}
+```
+
+# rust http gateway
+// 运行这个gateway/main.rs之前，请先启动src/main.rs启动rust grpc service
+```shell
+cargo run --bin rs-grpc-gateway
+```
+效果如下：
+```
+Finished dev [unoptimized + debuginfo] target(s) in 0.15s
+Running `target/debug/rs-grpc-gateway`
+rs-rpc http gateway
+current process pid:34744
+app run on:127.0.0.1:8090
+```
+验证http请求是否生效：
+```shell
+curl --location --request POST 'localhost:8090/v1/greeter/say_hello' \
+--header 'Content-Type: application/json' \
+--data-raw '{"id":1,"name":"daheige"}'
+```
+输出结果如下：
+```json
+{
+    "code": 0,
+    "message": "ok",
+    "data": {
+        "name": "daheige",
+        "message": "hello,daheige"
+    }
 }
 ```
 

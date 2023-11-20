@@ -19,7 +19,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let response = client.say_hello(request).await?;
     println!("res:{:?}", response);
 
-    // 由于response 对外是私有的，这里通过 into_inner 转换为公开字段
     let res = response.into_inner();
     println!("name:{}", res.name);
     println!("message:{}", res.message);

@@ -1,6 +1,6 @@
 use std::ffi::OsStr;
 use std::fs;
-use std::io::Write;
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -47,9 +47,52 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let filename = f.replace(".proto", "");
                 println!("current filename: {}", f);
                 let _ = mod_file.write(format!("pub mod {};\n", filename).as_bytes());
+
+                // 实现message serde encode/decode
+                let filename = out_dir.join(f.replace(".proto", ".rs"));
+                let mut buffer = fs::read_to_string(&filename).unwrap();
+                buffer = buffer.replace(
+                    "prost::Message",
+                    "prost::Message, serde::Serialize, serde::Deserialize",
+                );
+                fs::write(&filename, buffer).expect("write file content failed");
             }
         }
     }
 
+    // 将生成的代码放在rust gateway目录中
+    let gateway_dir = Path::new("gateway/rust_grpc");
+    fs::create_dir_all(gateway_dir)?; // 创建gateway目录
+    copy_dir_to(out_dir, gateway_dir)?;
+    fs::remove_file(gateway_dir.join("rpc_descriptor.bin"))?;
+
+    Ok(())
+}
+
+/// Copy the existing directory `src` to the target path `dst`.
+fn copy_dir_to(src: &Path, dst: &Path) -> io::Result<()> {
+    if !dst.is_dir() {
+        fs::create_dir(dst)?;
+    }
+    for entry_result in src.read_dir()? {
+        let entry = entry_result?;
+        let file_type = entry.file_type()?;
+        copy_to(&entry.path(), &file_type, &dst.join(entry.file_name()))?;
+    }
+    Ok(())
+}
+
+/// Copy whatever is at `src` to the target path `dst`.
+fn copy_to(src: &Path, src_type: &fs::FileType, dst: &Path) -> io::Result<()> {
+    if src_type.is_file() {
+        fs::copy(src, dst)?;
+    } else if src_type.is_dir() {
+        copy_dir_to(src, dst)?;
+    } else {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!("don't know how to copy: {}", src.display()),
+        ));
+    }
     Ok(())
 }

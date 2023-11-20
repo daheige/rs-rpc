@@ -5,6 +5,13 @@ use rust_grpc::hello::{HelloReply, HelloReq};
 
 use tonic::{transport::Server, Request, Response, Status};
 
+// 用于http 请求处理
+use axum::routing::{get, post};
+use axum::{http::StatusCode, response::IntoResponse, Json};
+
+// 用于序列化处理
+use serde::{Deserialize, Serialize};
+
 /// 定义grpc代码生成的包名
 mod rust_grpc;
 
@@ -33,6 +40,41 @@ impl GreeterService for GreeterImpl {
     }
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Reply<T> {
+    pub code: i32,
+    pub message: String,
+    pub data: Option<T>,
+}
+
+// 将请求反序列化到HelloReq，然后调用grpc service
+async fn say_hello(Json(payload): Json<HelloReq>) -> impl IntoResponse {
+    let req = Request::new(payload);
+    let greeter = GreeterImpl::default();
+    let response = greeter.say_hello(req).await;
+    match response {
+        Ok(res) => {
+            let reply = res.into_inner();
+            (
+                StatusCode::OK,
+                Json(Reply {
+                    code: 0,
+                    message: "ok".to_string(),
+                    data: Some(reply),
+                }),
+            )
+        }
+        Err(err) => (
+            StatusCode::OK,
+            Json(Reply {
+                code: 500,
+                message: format!("request err:{}", err),
+                data: None,
+            }),
+        ),
+    }
+}
+
 /// 采用 tokio 运行时来跑grpc server
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -40,7 +82,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("grpc server run on:{}", address);
 
     let axum_make_service = axum::Router::new()
-        .route("/", axum::routing::get(|| async { "Hello world!" }))
+        .route("/", get(|| async { "Hello world!" }))
+        .route("/v1/greeter/say_hello", post(say_hello))
         .into_make_service();
 
     // grpc reflection服务
@@ -57,7 +100,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .into_service();
 
     // hybrid server
-    let hybrid_make_service = hybrid_service::hybrid(axum_make_service,grpc_service);
+    let hybrid_make_service = hybrid_service::hybrid(axum_make_service, grpc_service);
     let server = hyper::Server::bind(&address).serve(hybrid_make_service);
     // if let Err(err) = server.await{
     //     println!("server error: {}", err);

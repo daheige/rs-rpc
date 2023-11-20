@@ -17,18 +17,15 @@ pub struct HybridMakeService<MakeWeb, Grpc> {
 }
 
 impl<ConnInfo, MakeWeb, Grpc> Service<ConnInfo> for HybridMakeService<MakeWeb, Grpc>
-    where
-        MakeWeb: Service<ConnInfo>,
-        Grpc: Clone,
+where
+    MakeWeb: Service<ConnInfo>,
+    Grpc: Clone,
 {
     type Response = HybridService<MakeWeb::Response, Grpc>;
     type Error = MakeWeb::Error;
     type Future = HybridMakeServiceFuture<MakeWeb::Future, Grpc>;
 
-    fn poll_ready(
-        &mut self,
-        cx: &mut std::task::Context,
-    ) -> Poll<Result<(), Self::Error>> {
+    fn poll_ready(&mut self, cx: &mut std::task::Context) -> Poll<Result<(), Self::Error>> {
         self.make_web.poll_ready(cx)
     }
 
@@ -48,8 +45,8 @@ pub struct HybridMakeServiceFuture<WebFuture, Grpc> {
 }
 
 impl<WebFuture, Web, WebError, Grpc> Future for HybridMakeServiceFuture<WebFuture, Grpc>
-    where
-        WebFuture: Future<Output = Result<Web, WebError>>,
+where
+    WebFuture: Future<Output = Result<Web, WebError>>,
 {
     type Output = Result<HybridService<Web, Grpc>, WebError>;
 
@@ -72,20 +69,17 @@ pub struct HybridService<Web, Grpc> {
 }
 
 impl<Web, Grpc, WebBody, GrpcBody> Service<Request<Body>> for HybridService<Web, Grpc>
-    where
-        Web: Service<Request<Body>, Response = Response<WebBody>>,
-        Grpc: Service<Request<Body>, Response = Response<GrpcBody>>,
-        Web::Error: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
-        Grpc::Error: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
+where
+    Web: Service<Request<Body>, Response = Response<WebBody>>,
+    Grpc: Service<Request<Body>, Response = Response<GrpcBody>>,
+    Web::Error: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
+    Grpc::Error: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
 {
     type Response = Response<HybridBody<WebBody, GrpcBody>>;
     type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
     type Future = HybridFuture<Web::Future, Grpc::Future>;
 
-    fn poll_ready(
-        &mut self,
-        cx: &mut std::task::Context<'_>,
-    ) -> Poll<Result<(), Self::Error>> {
+    fn poll_ready(&mut self, cx: &mut std::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
         match self.web.poll_ready(cx) {
             Poll::Ready(Ok(())) => match self.grpc.poll_ready(cx) {
                 Poll::Ready(Ok(())) => Poll::Ready(Ok(())),
@@ -113,11 +107,11 @@ pub enum HybridBody<WebBody, GrpcBody> {
 }
 
 impl<WebBody, GrpcBody> HttpBody for HybridBody<WebBody, GrpcBody>
-    where
-        WebBody: HttpBody + Send + Unpin,
-        GrpcBody: HttpBody<Data = WebBody::Data> + Send + Unpin,
-        WebBody::Error: std::error::Error + Send + Sync + 'static,
-        GrpcBody::Error: std::error::Error + Send + Sync + 'static,
+where
+    WebBody: HttpBody + Send + Unpin,
+    GrpcBody: HttpBody<Data = WebBody::Data> + Send + Unpin,
+    WebBody::Error: std::error::Error + Send + Sync + 'static,
+    GrpcBody::Error: std::error::Error + Send + Sync + 'static,
 {
     type Data = WebBody::Data;
     type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -157,12 +151,12 @@ pub enum HybridFuture<WebFuture, GrpcFuture> {
 }
 
 impl<WebFuture, GrpcFuture, WebBody, GrpcBody, WebError, GrpcError> Future
-for HybridFuture<WebFuture, GrpcFuture>
-    where
-        WebFuture: Future<Output = Result<Response<WebBody>, WebError>>,
-        GrpcFuture: Future<Output = Result<Response<GrpcBody>, GrpcError>>,
-        WebError: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
-        GrpcError: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
+    for HybridFuture<WebFuture, GrpcFuture>
+where
+    WebFuture: Future<Output = Result<Response<WebBody>, WebError>>,
+    GrpcFuture: Future<Output = Result<Response<GrpcBody>, GrpcError>>,
+    WebError: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
+    GrpcError: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
 {
     type Output = Result<
         Response<HybridBody<WebBody, GrpcBody>>,
