@@ -34,7 +34,7 @@ impl GreeterService for GreeterImpl {
 /// 采用 tokio 运行时来跑grpc server
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let address = "127.0.0.1:8081".parse()?;
+    let address = "0.0.0.0:8081".parse()?;
     println!("grpc server run on:{}", address);
 
     // grpc reflection服务
