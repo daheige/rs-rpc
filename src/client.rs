@@ -13,7 +13,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: "daheige".into(),
     });
 
-    let mut client = GreeterServiceClient::connect("http://127.0.0.1:8081").await?;
+    let address = "http://127.0.0.1:8081";
+    // let address = "http://127.0.0.1:3000";
+    let mut client = GreeterServiceClient::connect(address).await?;
     println!("client:{:?}", client);
 
     let response = client.say_hello(request).await?;

@@ -434,12 +434,43 @@ curl --location --request POST 'localhost:50051/v1/greeter/say_hello' \
 }
 ```
 
+# multiplex axum and grpc service
+```shell
+cargo run --bin rs-rpc-multi
+```
+启动效果如下：
+```shell
+    Finished dev [unoptimized + debuginfo] target(s) in 0.19s
+     Running `target/debug/rs-rpc-multi`
+grpc server run on:0.0.0.0:3000
+```
+发送multiplex http 请求
+```shell
+curl --location --request POST 'localhost:3000/v1/greeter/say_hello' \
+--header 'Content-Type: application/json' \
+--data-raw '{"id":1,"name":"daheige"}'
+```
+响应结果：
+```json
+{
+    "code": 0,
+    "message": "ok",
+    "data": {
+        "name": "daheige",
+        "message": "hello,daheige"
+    }
+}
+```
+- 这种将grpc和http multiplex service同时启动的流程，相对于hybrid_server.rs来说，是比较容易理解的。
+- 接入的路由，可以通过axum灵活配置处理，也就是说可以不用再额外再去实现grpc http gateway。
+- 对于client.rs实现，只需要改动src/main.rs端口为3000即可。
+
 # rust http gateway
 // 运行这个gateway/main.rs之前，请先启动src/main.rs启动rust grpc service
 ```shell
 cargo run --bin rs-grpc-gateway
 ```
-效果如下：
+运行效果如下：
 ```
 Finished dev [unoptimized + debuginfo] target(s) in 0.15s
 Running `target/debug/rs-grpc-gateway`

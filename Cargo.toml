@@ -18,6 +18,9 @@ path = "gateway/main.rs"
 [[bin]]
 name = "rs-rpc-hybrid"
 path = "src/hybrid_server.rs"
+[[bin]]
+name = "rs-rpc-multi"
+path = "src/multi_server.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -36,6 +39,13 @@ hyper = { version = "0.14", features = ["full"] }
 axum = { version = "0.6.20"}
 serde = { version = "1.0.192",features = ["derive"]}
 serde_json = "1.0.108"
+
+# axum multi service
+futures = "0.3"
+
+# tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [build-dependencies]
 # note: Must be the same as the tonic version

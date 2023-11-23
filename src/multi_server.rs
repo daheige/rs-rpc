@@ -1,19 +1,29 @@
-mod hybrid;
+mod multiplex;
+mod rust_grpc;
 
+use std::io;
+
+// 用于http 请求处理
+use axum::{http::StatusCode, response::IntoResponse, Json};
+use axum::{routing::{get, post},Router};
+use multiplex::MultiplexService;
+
+// grpc gen code import
 use rust_grpc::hello::greeter_service_server::{GreeterService, GreeterServiceServer};
 use rust_grpc::hello::{HelloReply, HelloReq};
 
+use std::net::SocketAddr;
 use tonic::{transport::Server, Request, Response, Status};
 
-// 用于http 请求处理
-use axum::routing::{get, post};
-use axum::{http::StatusCode, response::IntoResponse, Json};
+
 
 // 用于序列化处理
 use serde::{Deserialize, Serialize};
 
-/// 定义grpc代码生成的包名
-mod rust_grpc;
+// trace
+// use tracing::{error, info, Level};
+use tracing::{info};
+use tracing_subscriber::{fmt, EnvFilter};
 
 // 这个file descriptor文件是build.rs中定义的descriptor_path路径
 // 读取proto file descriptor bin二进制文件
@@ -38,6 +48,57 @@ impl GreeterService for GreeterImpl {
 
         Ok(Response::new(reply))
     }
+}
+
+/// 采用 tokio 运行时来跑grpc server
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // initialize tracing
+    fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        // .with_max_level(Level::WARN)
+        .with_file(true)
+        .with_line_number(true)
+        .with_writer(io::stdout) // 写入到标准输出
+        // sets this to be the default, global collector for this application.
+        .init();
+
+    // build rest router
+    let rest = Router::new().
+        route("/", get(web_root))
+        .route("/v1/greeter/say_hello", post(say_hello));
+
+    // service address
+    let address : SocketAddr = "0.0.0.0:3000".parse()?;
+    println!("grpc server run on:{}", address);
+
+    // grpc reflection服务
+    let reflection_service = tonic_reflection::server::Builder::configure()
+        .register_encoded_file_descriptor_set(PROTO_FILE_DESCRIPTOR_SET)
+        .build()
+        .unwrap();
+
+    let greeter = GreeterImpl::default();
+    let grpc_service = Server::builder()
+        .add_service(reflection_service)
+        .add_service(GreeterServiceServer::new(greeter))
+        .into_service();
+
+    // combine them into one service
+    let service = MultiplexService::new(rest, grpc_service);
+
+    info!("listening on {}", address);
+
+    // run multiplex service
+    axum::Server::bind(&address)
+        .serve(tower::make::Shared::new(service))
+        .await?;
+
+    Ok(())
+}
+
+async fn web_root() -> &'static str {
+    "Hello, World!"
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -73,40 +134,4 @@ async fn say_hello(Json(payload): Json<HelloReq>) -> impl IntoResponse {
             }),
         ),
     }
-}
-
-/// 采用 tokio 运行时来跑grpc server
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let address = "127.0.0.1:50051".parse()?;
-    println!("grpc server run on:{}", address);
-
-    let axum_make_service = axum::Router::new()
-        .route("/", get(|| async { "Hello world!" }))
-        .route("/v1/greeter/say_hello", post(say_hello))
-        .into_make_service();
-
-    // grpc reflection服务
-    let reflection_service = tonic_reflection::server::Builder::configure()
-        .register_encoded_file_descriptor_set(PROTO_FILE_DESCRIPTOR_SET)
-        .build()
-        .unwrap();
-
-    // grpc service
-    let greeter = GreeterImpl::default();
-    let grpc_service = Server::builder()
-        .add_service(reflection_service)
-        .add_service(GreeterServiceServer::new(greeter))
-        .into_service();
-
-    // hybrid server
-    let hybrid_make_service = hybrid::hybrid(axum_make_service, grpc_service);
-    let server = hyper::Server::bind(&address).serve(hybrid_make_service);
-    // if let Err(err) = server.await{
-    //     println!("server error: {}", err);
-    // }
-
-    server.await?;
-
-    Ok(())
 }
