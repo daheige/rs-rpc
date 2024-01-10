@@ -236,12 +236,23 @@ message:hello,daheige
 ```
 
 # run nodejs client
+install nodejs grpc tools
+```shell
+sh bin/node-grpc-tools.sh
+```
+
 generate nodejs code
 ```shell
 sh bin/nodejs-gen.sh
 ```
 
-install nodejs package and run by `cd clients/nodejs && npm install --save`
+install nodejs package
+```shell
+sudo npm install -g yarn
+cd clients/nodejs && yarn install
+```
+
+run node client
 ```shell
 node clients/nodejs/hello.js
 ```

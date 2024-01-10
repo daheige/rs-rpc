@@ -21,8 +21,6 @@ var global = (function() {
   return Function('return this')();
 }.call(null));
 
-// var google_api_annotations_pb = require('./google/api/annotations_pb.js');
-// this code deleted;
 goog.exportSymbol('proto.Hello.HelloReply', null, global);
 goog.exportSymbol('proto.Hello.HelloReq', null, global);
 /**
