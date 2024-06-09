@@ -17,11 +17,35 @@ sudo make install
 
 ```
 # php grpc_php_plugin 插件安装
-参考文档：https://www.jianshu.com/p/bb15ad7532be
+参考文档：https://www.jb51.net/article/262750.htm
 
+执行步骤如下：
 ```shell
-make protoc grpc_php_plugin
+sudo mkdir -p /usr/local/grpc
+sudo chown -R $USER /usr/local/grpc
+export PHP_RELEASE_TAG_HERE=v1.64.2
+cd /usr/local/grpc
+git clone -b $PHP_RELEASE_TAG_HERE https://github.com/grpc/grpc
+cd grpc
+git submodule update --init
+mkdir -p cmake/build
+cd cmake/build
+cmake ../..
+sudo make protoc grpc_php_plugin
 ```
+如果`grpc_php_plugin`安装成功，提示如下：
+```
+[ 50%] Built target statusor
+[ 68%] Built target libprotobuf
+[ 93%] Built target libprotoc
+[100%] Built target grpc_plugin_support
+[100%] Built target grpc_php_plugin
+```
+查看安装好的`grpc_php_plugin`路径:
+```shell
+which grpc_php_plugin
+```
+输出结果：/usr/local/bin/grpc_php_plugin
 
 # php protobuf拓展安装
 先判断是否安装php grpc.so and protobuf.so
