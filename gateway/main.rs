@@ -18,6 +18,7 @@ use std::net::SocketAddr;
 use std::process;
 use std::sync::Arc;
 use std::time::Duration;
+use tokio::net::TcpListener;
 use tokio::signal;
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -91,8 +92,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // run app
     let address: SocketAddr = "0.0.0.0:8090".parse().unwrap();
     println!("app run on:{}", address.to_string());
-    axum::Server::bind(&address)
-        .serve(router.into_make_service())
+
+    // Create a `TcpListener` using tokio.
+    let listener = TcpListener::bind(address).await.unwrap();
+
+    // // run multiplex service with graceful shutdown
+    axum::serve(listener, router.into_make_service())
         .with_graceful_shutdown(graceful_shutdown())
         .await?;
 
@@ -104,7 +109,7 @@ async fn graceful_shutdown() {
     let ctrl_c = async {
         signal::ctrl_c()
             .await
-            .expect("failed to install ctrl+c handler");
+            .expect("failed to install Ctrl+C handler");
     };
 
     #[cfg(unix)]
