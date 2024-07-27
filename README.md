@@ -491,7 +491,7 @@ tower = { version = "0.4.13", features = ["steer"] }
 cargo run --bin rs-multiplex-svc
 ```
 成功运行后的效果：
-```toml
+```
 Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.30s
 Running `target/debug/rs-multiplex-svc`
 grpc server and http server run on:0.0.0.0:8081
