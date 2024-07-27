@@ -13,7 +13,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         name: "daheige".into(),
     });
 
-    let address = "http://127.0.0.1:8081";
+    let address = "http://127.0.0.1:50051";
+    // let address = "http://127.0.0.1:8081";
     let mut client = GreeterServiceClient::connect(address).await?;
     println!("client:{:?}", client);
 

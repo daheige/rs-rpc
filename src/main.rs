@@ -1,8 +1,12 @@
+use autometrics::autometrics;
+use infras::metrics::prometheus_init;
 use rust_grpc::hello::greeter_service_server::{GreeterService, GreeterServiceServer};
 use rust_grpc::hello::{HelloReply, HelloReq};
-
+use std::net::SocketAddr;
+use std::time::Duration;
 use tonic::{transport::Server, Request, Response, Status};
 
+mod infras;
 /// 定义grpc代码生成的包名
 mod rust_grpc;
 
@@ -14,9 +18,10 @@ pub(crate) const PROTO_FILE_DESCRIPTOR_SET: &[u8] = include_bytes!("rust_grpc/rp
 #[derive(Debug, Default)]
 pub struct GreeterImpl {}
 
-#[tonic::async_trait]
+#[async_trait::async_trait]
 impl GreeterService for GreeterImpl {
     // 实现async_hello方法
+    #[autometrics]
     async fn say_hello(&self, request: Request<HelloReq>) -> Result<Response<HelloReply>, Status> {
         // 获取request pb message
         let req = &request.into_inner();
@@ -34,7 +39,7 @@ impl GreeterService for GreeterImpl {
 /// 采用 tokio 运行时来跑grpc server
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let address = "0.0.0.0:8081".parse()?;
+    let address: SocketAddr = "0.0.0.0:50051".parse()?;
     println!("grpc server run on:{}", address);
 
     // grpc reflection服务
@@ -43,12 +48,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()
         .unwrap();
 
-    let greeter = GreeterImpl::default();
-    Server::builder()
-        .add_service(reflection_service)
-        .add_service(GreeterServiceServer::new(greeter))
-        .serve(address)
-        .await?;
+    // create http /metrics endpoint
+    let metrics_server = prometheus_init(2338);
+    let metrics_handler = tokio::spawn(metrics_server);
 
+    // create grpc server
+    let greeter = GreeterImpl::default();
+    let grpc_handler = tokio::spawn(async move {
+        Server::builder()
+            .add_service(reflection_service)
+            .add_service(GreeterServiceServer::new(greeter))
+            .serve_with_shutdown(
+                address,
+                infras::shutdown::graceful_shutdown(Duration::from_secs(3)),
+            )
+            .await
+            .expect("failed to start grpc server");
+    });
+
+    // run async tasks by tokio try_join macro
+    let _ = tokio::try_join!(metrics_handler, grpc_handler);
     Ok(())
 }

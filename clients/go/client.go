@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	address = "localhost:8081" // grpc server and http gateway on share port
-	// address = "localhost:50051" // grpc server port without http gateway
+// 	address = "localhost:8081" // grpc server and http gateway on share port
+	address = "localhost:50051" // grpc server port without http gateway
 	// address     = "localhost:50050" // nginx grpc_pass port
 	defaultName = "golang grpc"
 )

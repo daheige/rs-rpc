@@ -28,7 +28,7 @@ pub struct Reply<T> {
     pub data: Option<T>,
 }
 
-const GRPC_ADDRESS: &str = "http://127.0.0.1:8081";
+const GRPC_ADDRESS: &str = "http://127.0.0.1:50051";
 
 // 将请求反序列化到HelloReq，然后调用grpc service
 async fn say_hello(Json(payload): Json<HelloReq>, state: Arc<AppState>) -> impl IntoResponse {

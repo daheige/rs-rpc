@@ -23,7 +23,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&grpcServerEndpoint, "grpc-server-endpoint", "localhost:8081", "gRPC server endpoint")
+	flag.StringVar(&grpcServerEndpoint, "grpc-server-endpoint", "localhost:50051", "gRPC server endpoint")
 	flag.StringVar(&grpcGatewayAddress, "grpc-http-gateway", "localhost:8090", "gRPC http gateway address")
 	flag.Parse()
 }

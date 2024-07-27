@@ -1,7 +1,7 @@
 <?php
 require dirname(__FILE__) . '/vendor/autoload.php';
 
-const GRPC_ADDRESS = '127.0.0.1:8081';
+const GRPC_ADDRESS = '127.0.0.1:50051';
 
 // php hello.php daheige
 function greet($name)

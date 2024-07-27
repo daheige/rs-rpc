@@ -6,8 +6,8 @@ let request = new messages.HelloReq();
 request.setName('heige');
 
 let client = new services.GreeterServiceClient(
-    'localhost:8081',
-    // 'localhost:50050', // nginx grpc pass port
+    'localhost:50051',
+    // 'localhost:8090', // nginx grpc pass port
     grpc.credentials.createInsecure()
 );
 
