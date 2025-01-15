@@ -11,7 +11,7 @@ function greet($name)
     ]);
 
     echo "check \Hello\HelloReq exist" . PHP_EOL;
-    var_dump(class_exists("\Hello\HelloReq"));
+    var_dump(class_exists("App\Grpc\Hello\HelloReq"));
     $request = new App\Grpc\Hello\HelloReq();
     $request->setName($name);
     list($reply, $status) = $client->SayHello($request)->wait();

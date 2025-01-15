@@ -14,7 +14,8 @@ use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use std::time::Duration;
 use tokio::net::TcpListener;
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::service::Routes;
+use tonic::{Request, Response, Status};
 use tower::{make::Shared, steer::Steer};
 
 mod infras;
@@ -95,14 +96,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // grpc reflection服务
     let reflection_service = tonic_reflection::server::Builder::configure()
         .register_encoded_file_descriptor_set(PROTO_FILE_DESCRIPTOR_SET)
-        .build()
+        .build_v1()
         .unwrap();
 
+    // grpc service
     let greeter = GreeterImpl::default();
-    let grpc_server = Server::builder()
+    let grpc_service = GreeterServiceServer::new(greeter);
+
+    // create grpc server
+    let grpc_server = Routes::new(grpc_service)
         .add_service(reflection_service)
-        .add_service(GreeterServiceServer::new(greeter))
-        .into_router();
+        .into_axum_router();
 
     // build the rest service
     let rest_server = Router::new()

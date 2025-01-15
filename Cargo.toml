@@ -23,28 +23,28 @@ path = "src/multiplex_service.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tonic = "0.12.1"
-prost = "0.13.1"
-tokio = {version = "1.39.1",features = ["full"]}
+tonic = "0.12.3"
+prost = "0.13.4"
+tokio = {version = "1.43.0",features = ["full"]}
 # note: Must be the same as the tonic version
-tonic-reflection = "0.12.1"
+tonic-reflection = "0.12.3"
 
 # 用于将grpc服务和http服务运行在一个端口上面
-tower = { version = "0.4.13", features = ["steer"] }
+tower = { version = "0.5.2", features = ["steer"] }
 
 # axum
-axum = "0.7.5"
+axum = "0.7.9"
 
 # serde
-serde = { version = "1.0.204",features = ["derive"]}
-serde_json = "1.0.120"
+serde = { version = "1.0.217",features = ["derive"]}
+serde_json = "1.0.135"
 
 # async trait
-async-trait = "0.1.81"
+async-trait = "0.1.85"
 
 # autometrics-rs 用于自动prometheus metrics服务可观测性
 autometrics = {version = "1.0.1",features = ["prometheus-exporter"]}
 
 [build-dependencies]
 # note: Must be the same as the tonic version
-tonic-build = "0.12.1"
+tonic-build = "0.12.3"
