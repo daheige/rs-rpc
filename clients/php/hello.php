@@ -10,7 +10,7 @@ function greet($name)
         'credentials' => Grpc\ChannelCredentials::createInsecure(),
     ]);
 
-    echo "check \Hello\HelloReq exist" . PHP_EOL;
+    echo "check App\Grpc\Hello\HelloReq exist" . PHP_EOL;
     var_dump(class_exists("App\Grpc\Hello\HelloReq"));
     $request = new App\Grpc\Hello\HelloReq();
     $request->setName($name);
